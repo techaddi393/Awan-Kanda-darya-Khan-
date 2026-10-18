@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اعوان کمپیوٹرائزڈ کانٹا - لکڑ منڈی و ٹھیکیدار کھاتہ سسٹم</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, 'Nastaliq', sans-serif; background-color: #f8fafc; margin: 0; padding: 15px; color: #0f172a; text-align: right; }
+        .container { max-width: 980px; background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin: auto; border: 2px solid #0369a1; }
+        
+        .slip-header { text-align: center; border-bottom: 2px solid #0369a1; padding-bottom: 12px; margin-bottom: 15px; }
+        .slip-title { font-size: 30px; font-weight: bold; color: #0369a1; margin: 0; }
+        .slip-subtitle { font-size: 13px; color: #475569; margin-top: 4px; }
+        .contact-info { font-size: 13px; font-weight: bold; color: #0f172a; margin-top: 4px; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        label { font-size: 13px; font-weight: bold; color: #334155; margin-bottom: 4px; }
+        input, select { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: #fff; text-align: right; }
+        
+        .mode-toggle { background: #e0f2fe; padding: 10px; border-radius: 8px; border: 1px solid #7dd3fc; margin-bottom: 15px; display: flex; gap: 15px; align-items: center; justify-content: center; }
+        .mode-toggle label { font-size: 14px; cursor: pointer; color: #0369a1; font-weight: bold; }
+
+        .calc-box { background: #f0fdf4; border: 1px solid #86efac; padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; }
+        .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; text-align: center; font-weight: bold; }
+        .result-card { background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #bbf7d0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .result-value { font-size: 17px; color: #15803d; margin-top: 5px; }
+
+        .btn { background-color: #0369a1; color: white; border: none; padding: 10px 18px; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background-color: #0284c7; }
+        .btn-green { background-color: #10b981; }
+        .btn-green:hover { background-color: #059669; }
+        .btn-orange { background-color: #f59e0b; color: white; }
+        .btn-purple { background-color: #7c3aed; color: white; }
+        .btn-dark { background-color: #0f172a; color: white; }
+
+        .admin-only { display: none; }
+
+        .history-box { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-top: 25px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; margin-top: 10px; }
+        th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: center; }
+        th { background: #e2e8f0; color: #334155; }
+
+        .token-preview { background: #fff; border: 2px dashed #0369a1; padding: 15px; border-radius: 8px; margin-top: 15px; display: none; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print { display: none !important; }
+            .container { box-shadow: none; border: 2px solid #000; width: 100%; max-width: 100%; }
+            #printableToken { display: block !important; border: 2px solid #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="printableArea">
+    <!-- ٹاپ نیویگیشن -->
+    <div style="display: flex; justify-content: space-between; align-items: center;" class="no-print">
+        <h3 style="color:#0369a1; margin:0;">اعوان کانٹا - لکڑ منڈی سافٹ ویئر</h3>
+        <button class="btn btn-dark" onclick="toggleAdminMode()" id="adminBtn">🔒 12 ٹھیکیدار ایڈمن کھاتہ پینل</button>
+    </div>
+
+    <!-- اعوان کمپیوٹرائزڈ کانٹا ہیڈر -->
+    <div class="slip-header" style="margin-top:10px;">
+        <div class="slip-title">اعوان کمپیوٹرائزڈ کانٹا (کنڈا)</div>
+        <div class="slip-subtitle">بنگیا ل چوک خسور موڑ دریا خان ضلع بھکر (فل کپیسٹی کے ساتھ)</div>
+        <div class="contact-info">پروپرائیٹر: ایم کاشف | 0342-1072883 | 0303-4699436 (24 گھنٹے سروس)</div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 👑 12 ٹھیکیدار ایڈمن کھاتہ و ٹرانسفر پینل (خاص سیکشن) -->
+    <!-- ========================================================= -->
+    <div class="admin-only" style="background: #fefce8; border: 2px solid #fef08a; padding: 18px; border-radius: 10px; margin-bottom: 20px;">
+        <h3 style="color: #b45309; margin-top:0; border-bottom: 2px solid #ca8a04; padding-bottom: 5px;">
+            👑 12 ٹھیکیدار کھاتہ و گدھا گاڑی / رکشہ ٹرانسفر پینل
+        </h3>
+        <p style="font-size: 12px; color: #78350f; margin-top:0;">منڈی میں مال ٹرانسفر کرنے والے ٹھیکیدار کا انتخاب کریں، چکر کی تعداد اور پرچی فیس درج کریں:</p>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>12 مخصوص ٹھیکیدار منتخب کریں:</label>
+                <select id="contractorListSelect">
+                    <option value="ٹھیکیدار 1 - حاجی منظور">ٹھیکیدار 1 - حاجی منظور</option>
+                    <option value="ٹھیکیدار 2 - رانا سلیم">ٹھیکیدار 2 - رانا سلیم</option>
+                    <option value="ٹھیکیدار 3 - استاد کاشف">ٹھیکیدار 3 - استاد کاشف</option>
+                    <option value="ٹھیکیدار 4 - ملک طارق">ٹھیکیدار 4 - ملک طارق</option>
+                    <option value="ٹھیکیدار 5 - چوہدری ناصر">ٹھیکیدار 5 - چوہدری ناصر</option>
+                    <option value="ٹھیکیدار 6 - خان محمد">ٹھیکیدار 6 - خان محمد</option>
+                    <option value="ٹھیکیدار 7 - مہر بشیر">ٹھیکیدار 7 - مہر بشیر</option>
+                    <option value="ٹھیکیدار 8 - طاہر عباس">ٹھیکیدار 8 - طاہر عباس</option>
+                    <option value="ٹھیکیدار 9 - فاروق خان">ٹھیکیدار 9 - فاروق خان</option>
+                    <option value="ٹھیکیدار 10 - سجاد حسین">ٹھیکیدار 10 - سجاد حسین</option>
+                    <option value="ٹھیکیدار 11 - عمران علی">ٹھیکیدار 11 - عمران علی</option>
+                    <option value="ٹھیکیدار 12 - اصغر خان">ٹھیکیدار 12 - اصغر خان</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>سواری / ٹرانسفر ذریعہ:</label>
+                <select id="transferType">
+                    <option value="گدھا ریڑی (Donkey Cart)">گدھا ریڑی (Donkey Cart)</option>
+                    <option value="رکشہ لوڈر (Rickshaw Loader)">رکشہ لوڈر (Rickshaw Loader)</option>
+                    <option value="چھوٹی گاڑی / سوزوکی">چھوٹی گاڑی / سوزوکی</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>گدھا گاڑی / چکروں کی تعداد:</label>
+                <input type="number" id="tripCount" value="1" placeholder="مثلاً 5 گاڑی / چکر" oninput="calcFeeTotal()">
+            </div>
+            <div class="form-group">
+                <label>فی پرچی / ٹوکن فیس (روپے):</label>
+                <input type="number" id="tokenFee" value="50" placeholder="مثلاً 50" oninput="calcFeeTotal()">
+            </div>
+            <div class="form-group">
+                <label>کل پرچی فیس (روپے):</label>
+                <input type="text" id="totalTokenFeeDisplay" value="50" readonly style="font-weight:bold; color:#b45309; background:#fff7ed;">
+            </div>
+        </div>
+
+        <div style="text-align: left; margin-top: 10px;">
+            <button class="btn btn-purple" onclick="saveContractorToken()">🧾 ٹوکن پرچی کاٹیں و محفوظ کریں</button>
+        </div>
+
+        <!-- ٹھیکیدار کھاتہ ہسٹری -->
+        <h4 style="color:#854d0e; margin-bottom:5px; margin-top:15px;">📋 ٹھیکیدار کھاتہ و ٹوکن ہسٹری</h4>
+        <div style="max-height: 150px; overflow-y: auto;">
+            <table>
+                <thead>
+                    <tr style="background:#fef08a;">
+                        <th>ٹوکن #</th>
+                        <th>ٹھیکیدار کا نام</th>
+                        <th>سواری</th>
+                        <th>چکر / تعداد</th>
+                        <th>کل فیس</th>
+                        <th>تاریخ</th>
+                        <th>پرنٹ</th>
+                    </tr>
+                </thead>
+                <tbody id="contractorHistoryTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 🚚 مین کانٹا وزنی بلنگ پینل -->
+    <!-- ========================================================= -->
+
+    <!-- بنیادی تفصیلات -->
+    <div class="form-grid">
+        <div class="form-group">
+            <label>پرچی / سیریل نمبر:</label>
+            <input type="text" id="serialNo" value="1001">
+        </div>
+        <div class="form-group">
+            <label>تاریخ:</label>
+            <input type="text" id="slipDate">
+        </div>
+        <div class="form-group">
+            <label>گاڑی نمبر / تفصیل:</label>
+            <input type="text" id="vehicleNo" placeholder="مثلاً LES-1234">
+        </div>
+        <div class="form-group">
+            <label>بیچنے والے کا نام (فروخت کنندہ):</label>
+            <input type="text" id="sellerName" placeholder="نام درج کریں...">
+        </div>
+        <div class="form-group">
+            <label>خریدنے والے کا نام / ٹھیکیدار:</label>
+            <input type="text" id="buyerName" placeholder="نام درج کریں...">
+        </div>
+        <div class="form-group">
+            <label>لکڑی کی قسم / تفصیل:</label>
+            <input type="text" id="woodType" value="سفیدہ / پاپولر">
+        </div>
+    </div>
+
+    <!-- طریقہ انتخاب -->
+    <div class="mode-toggle no-print">
+        <span>بلنگ کا طریقہ منتخب کریں:</span>
+        <label><input type="radio" name="calcMode" value="weightMode" checked onchange="toggleMode()"> 🚛 کانٹا وزنی طریقہ (کلوگرام سے)</label>
+        <label><input type="radio" name="calcMode" value="directMaundMode" onchange="toggleMode()"> ⚖️ ڈائریکٹ من موڈ (ٹھیکیدار اینٹری)</label>
+    </div>
+
+    <!-- کانٹا وزنی سیکشن -->
+    <div id="weightSection" style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-top: 10px;">
+        <h4 style="margin-top:0; color:#0369a1; border-bottom:2px solid #0369a1; padding-bottom:5px;">کانٹا وزن تفصیلات (کلوگرام)</h4>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>1. بھاری گاڑی کا وزن (لکڑی سمیت):</label>
+                <input type="number" id="grossWeight" placeholder="کلوگرام درج کریں" oninput="calculateAll()">
+            </div>
+            <div class="form-group">
+                <label>2. خالی گاڑی کا وزن (ڈالا خالی):</label>
+                <input type="number" id="tareWeight" placeholder="کلوگرام درج کریں" oninput="calculateAll()">
+            </div>
+        </div>
+    </div>
+
+    <!-- ڈائریکٹ من سیکشن -->
+    <div id="directMaundSection" style="background: #fefce8; border: 1px solid #fef08a; padding: 15px; border-radius: 8px; margin-top: 10px; display:none;">
+        <h4 style="margin-top:0; color:#ca8a04; border-bottom:2px solid #ca8a04; padding-bottom:5px;">دستی / ٹھیکیدار اینٹری (من اور کلو)</h4>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>کل من (Maunds):</label>
+                <input type="number" id="directMaunds" placeholder="مثلاً 150" oninput="calculateAll()">
+            </div>
+            <div class="form-group">
+                <label>اضافی کلوگرام (Kg):</label>
+                <input type="number" id="directKgs" placeholder="مثلاً 20" value="0" oninput="calculateAll()">
+            </div>
+        </div>
+    </div>
+
+    <!-- کاٹ اور ریٹ سیٹنگز -->
+    <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-top: 10px;">
+        <div class="form-grid" style="margin-bottom:0;">
+            <div class="form-group">
+                <label>کاٹ کی قسم (2%، 5% یا 6%):</label>
+                <select id="cutPercentage" onchange="calculateAll()">
+                    <option value="2">2% کاٹ</option>
+                    <option value="5">اوپر کا مال (5% کاٹ)</option>
+                    <option value="6">نیچے کا مال (6% کاٹ)</option>
+                    <option value="0">بغیر کاٹ (0%)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>ریٹ فی من (روپے):</label>
+                <input type="number" id="ratePerMaund" placeholder="مثلاً 650" oninput="calculateAll()">
+            </div>
+        </div>
+    </div>
+
+    <!-- خودکار نتائج -->
+    <div class="calc-box">
+        <div class="result-grid">
+            <div class="result-card">
+                <div>صافی وزن (کلو):</div>
+                <div class="result-value"><span id="netWeightDisplay">0</span> کلو</div>
+            </div>
+            <div class="result-card">
+                <div>کل وزن (من + کلو):</div>
+                <div class="result-value"><span id="maundKgDisplay">0 من 0 کلو</span></div>
+            </div>
+            <div class="result-card">
+                <div>کاٹ کی مقدار:</div>
+                <div class="result-value"><span id="cutDisplay">0 من 0 کلو</span></div>
+            </div>
+            <div class="result-card">
+                <div>باقی صافی وزن:</div>
+                <div class="result-value"><span id="finalDisplay">0 من 0 کلو</span></div>
+            </div>
+            <div class="result-card" style="background: #dcfce7; border-color: #4ade80;">
+                <div>کل رقم (روپے):</div>
+                <div class="result-value" style="font-size: 20px; color: #166534;">Rs <span id="totalPriceDisplay">0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- بٹنز -->
+    <div style="text-align: center; margin-top: 15px;" class="no-print">
+        <button class="btn btn-green" onclick="saveRecord()">💾 مرکزی پرچی سیو کریں</button>
+        <button class="btn" onclick="window.print()">🖨️ پرنٹ / PDF پرچی نکالیں</button>
+        <button class="btn btn-orange" onclick="resetForm()">✨ نیا اندراج</button>
+    </div>
+
+    <!-- محفوظ شدہ ریکارڈز کی ہسٹری -->
+    <div class="history-box no-print">
+        <h3 style="margin-top:0; color:#0369a1;">📂 محفوظ شدہ گاڑیوں کا ریکارڈ (History & Edit)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>سیریل #</th>
+                    <th>گاڑی نمبر</th>
+                    <th>فروخت کنندہ / ٹھیکیدار</th>
+                    <th>صافی وزن (من/کلو)</th>
+                    <th>کاٹ %</th>
+                    <th>فائنل وزن</th>
+                    <th>کل رقم</th>
+                    <th>ایکشن</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- 🧾 علیحدہ ٹوکن پرچی کا پرنٹ پریویو -->
+    <div class="token-preview" id="printableToken">
+        <div style="text-align:center;">
+            <h3 style="margin:0; color:#0369a1;">اعوان کمپیوٹرائزڈ کانٹا (کنڈا) - دریا خان</h3>
+            <div style="font-size:12px;">منڈی داخلی ٹرانسفر ٹوکن پرچی</div>
+            <hr style="margin:8px 0;">
+        </div>
+        <div style="font-size:13px; line-height:1.8;">
+            <div><b>ٹوکن نمبر:</b> <span id="tokNo">TOK-101</span></div>
+            <div><b>تاریخ:</b> <span id="tokDate">18/10/2026</span></div>
+            <div><b>ٹھیکیدار کا نام:</b> <span id="tokContractor">حاجی منظور</span></div>
+            <div><b>ٹرانسفر ذریعہ:</b> <span id="tokVehicle">گدھا ریڑی</span></div>
+            <div><b>چکر / گاڑیاں تعداد:</b> <span id="tokTrips">5</span></div>
+            <div><b>پرچی فیس:</b> Rs <span id="tokFee">250</span></div>
+        </div>
+        <div style="text-align:center; font-size:11px; margin-top:15px; border-top:1px dashed #cbd5e1; padding-top:5px;">
+            شکریہ! اعوان کانٹا 24 گھنٹے سروس
+        </div>
+    </div>
+</div>
+
+<script>
+    const ADMIN_PASS = "1234";
+    let isAdminActive = false;
+
+    let recordArchive = JSON.parse(localStorage.getItem('awan_kanda_wood_records')) || [];
+    let contractorTokens = JSON.parse(localStorage.getItem('awan_contractor_tokens')) || [];
+    let editingIndex = null;
+
+    function toggleAdminMode() {
+        if(!isAdminActive) {
+            const pass = prompt("👑 ایڈمن کھاتہ پینل کا پاسورڈ درج کریں (ڈیفالٹ: 1234):");
+            if(pass === ADMIN_PASS) {
+                isAdminActive = true;
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+                document.getElementById('adminBtn').innerText = "🔓 لاک ایڈمن پینل";
+                alert("👑 12 ٹھیکیدار ایڈمن کھاتہ پینل ایکٹیو ہو گیا!");
+            } else {
+                alert("❌ غلط پاسورڈ!");
+            }
+        } else {
+            isAdminActive = false;
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+            document.getElementById('adminBtn').innerText = "🔒 12 ٹھیکیدار ایڈمن کھاتہ پینل";
+        }
+    }
+
+    function calcFeeTotal() {
+        const trips = parseFloat(document.getElementById('tripCount').value) || 0;
+        const fee = parseFloat(document.getElementById('tokenFee').value) || 0;
+        document.getElementById('totalTokenFeeDisplay').value = trips * fee;
+    }
+
+    function saveContractorToken() {
+        const contractor = document.getElementById('contractorListSelect').value;
+        const vehicle = document.getElementById('transferType').value;
+        const trips = document.getElementById('tripCount').value;
+        const totalFee = document.getElementById('totalTokenFeeDisplay').value;
+        const tokId = "TOK-" + Math.floor(100 + Math.random() * 900);
+        const tokDate = new Date().toLocaleDateString();
+
+        const tokenObj = { id: tokId, date: tokDate, contractor, vehicle, trips, totalFee };
+        contractorTokens.unshift(tokenObj);
+        localStorage.setItem('awan_contractor_tokens', JSON.stringify(contractorTokens));
+
+        renderContractorHistory();
+        alert(`🧾 ٹھیکیدار ${contractor} کی پرچی سیو ہو گئی ہے! (کل فیس: Rs ${totalFee})`);
+    }
+
+    function renderContractorHistory() {
+        const tbody = document.getElementById('contractorHistoryTbody');
+        tbody.innerHTML = '';
+
+        if(contractorTokens.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7">کوئی پرانا ٹوکن محفوظ نہیں ہے۔</td></tr>`;
+            return;
+        }
+
+        contractorTokens.forEach((tok, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><b>${tok.id}</b></td>
+                    <td>${tok.contractor}</td>
+                    <td>${tok.vehicle}</td>
+                    <td>${tok.trips}</td>
+                    <td><b>Rs ${tok.totalFee}</b></td>
+                    <td>${tok.date}</td>
+                    <td><button class="btn btn-purple" style="padding:2px 6px; font-size:10px;" onclick="printSingleToken(${index})">🖨️ پرنٹ ٹوکن</button></td>
+                </tr>
+            `;
+        });
+    }
+
+    function printSingleToken(index) {
+        const tok = contractorTokens[index];
+        document.getElementById('tokNo').innerText = tok.id;
+        document.getElementById('tokDate').innerText = tok.date;
+        document.getElementById('tokContractor').innerText = tok.contractor;
+        document.getElementById('tokVehicle').innerText = tok.vehicle;
+        document.getElementById('tokTrips').innerText = tok.trips;
+        document.getElementById('tokFee').innerText = tok.totalFee;
+
+        document.getElementById('printableToken').style.display = 'block';
+        window.print();
+        setTimeout(() => { document.getElementById('printableToken').style.display = 'none'; }, 1000);
+    }
+
+    function toggleMode() {
+        const mode = document.querySelector('input[name="calcMode"]:checked').value;
+        if(mode === 'weightMode') {
+            document.getElementById('weightSection').style.display = 'block';
+            document.getElementById('directMaundSection').style.display = 'none';
+        } else {
+            document.getElementById('weightSection').style.display = 'none';
+            document.getElementById('directMaundSection').style.display = 'block';
+        }
+        calculateAll();
+    }
+
+    function kgToMaundKg(totalKg) {
+        const maunds = Math.floor(totalKg / 40);
+        const kgs = Math.round(totalKg % 40);
+        return { maunds, kgs };
+    }
+
+    function calculateAll() {
+        const mode = document.querySelector('input[name="calcMode"]:checked').value;
+        const cutPercent = parseFloat(document.getElementById('cutPercentage').value) || 0;
+        const rate = parseFloat(document.getElementById('ratePerMaund').value) || 0;
+
+        let netKg = 0;
+
+        if(mode === 'weightMode') {
+            const gross = parseFloat(document.getElementById('grossWeight').value) || 0;
+            const tare = parseFloat(document.getElementById('tareWeight').value) || 0;
+            netKg = gross - tare > 0 ? gross - tare : 0;
+        } else {
+            const dMaunds = parseFloat(document.getElementById('directMaunds').value) || 0;
+            const dKgs = parseFloat(document.getElementById('directKgs').value) || 0;
+            netKg = (dMaunds * 40) + dKgs;
+        }
+
+        document.getElementById('netWeightDisplay').innerText = netKg;
+
+        const mk = kgToMaundKg(netKg);
+        document.getElementById('maundKgDisplay').innerText = `${mk.maunds} من ${mk.kgs} کلو`;
+
+        const cutKg = (netKg * cutPercent) / 100;
+        const cutMk = kgToMaundKg(cutKg);
+        document.getElementById('cutDisplay').innerText = `${cutMk.maunds} من ${cutMk.kgs} کلو`;
+
+        const finalKg = netKg - cutKg;
+        const finalMk = kgToMaundKg(finalKg);
+        document.getElementById('finalDisplay').innerText = `${finalMk.maunds} من ${finalMk.kgs} کلو`;
+
+        const totalMaundsDecimal = finalKg / 40;
+        const totalPrice = totalMaundsDecimal * rate;
+        document.getElementById('totalPriceDisplay').innerText = Math.round(totalPrice).toLocaleString();
+    }
+
+    function saveRecord() {
+        const recordData = {
+            serialNo: document.getElementById('serialNo').value,
+            date: document.getElementById('slipDate').value,
+            vehicleNo: document.getElementById('vehicleNo').value,
+            seller: document.getElementById('sellerName').value,
+            buyer: document.getElementById('buyerName').value,
+            woodType: document.getElementById('woodType').value,
+            gross: document.getElementById('grossWeight').value,
+            tare: document.getElementById('tareWeight').value,
+            netKg: document.getElementById('netWeightDisplay').innerText,
+            maundKgStr: document.getElementById('maundKgDisplay').innerText,
+            cutPercent: document.getElementById('cutPercentage').value,
+            cutStr: document.getElementById('cutDisplay').innerText,
+            finalStr: document.getElementById('finalDisplay').innerText,
+            rate: document.getElementById('ratePerMaund').value,
+            totalPrice: document.getElementById('totalPriceDisplay').innerText
+        };
+
+        if(editingIndex !== null) {
+            recordArchive[editingIndex] = recordData;
+            editingIndex = null;
+            alert('✏️ اعوان کانٹا کا ریکارڈ اپڈیٹ ہو گیا ہے!');
+        } else {
+            recordArchive.unshift(recordData);
+            alert('💾 اعوان کانٹا کا ریکارڈ محفوظ ہو گیا ہے!');
+        }
+
+        localStorage.setItem('awan_kanda_wood_records', JSON.stringify(recordArchive));
+        renderHistory();
+    }
+
+    function renderHistory() {
+        const tbody = document.getElementById('historyTableBody');
+        tbody.innerHTML = '';
+
+        if(recordArchive.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8">کوئی پرانا ریکارڈ موجود نہیں ہے۔</td></tr>`;
+            return;
+        }
+
+        recordArchive.forEach((rec, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><b>${rec.serialNo}</b></td>
+                    <td>${rec.vehicleNo}</td>
+                    <td>${rec.seller} / ${rec.buyer}</td>
+                    <td>${rec.maundKgStr}</td>
+                    <td>${rec.cutPercent}%</td>
+                    <td><b>${rec.finalStr}</b></td>
+                    <td><b>Rs ${rec.totalPrice}</b></td>
+                    <td>
+                        <button class="btn btn-orange" style="padding:2px 6px; font-size:11px;" onclick="editRecord(${index})">✏️ Edit</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function editRecord(index) {
+        const rec = recordArchive[index];
+        document.getElementById('serialNo').value = rec.serialNo;
+        document.getElementById('slipDate').value = rec.date;
+        document.getElementById('vehicleNo').value = rec.vehicleNo;
+        document.getElementById('sellerName').value = rec.seller;
+        document.getElementById('buyerName').value = rec.buyer;
+        document.getElementById('woodType').value = rec.woodType;
+        document.getElementById('grossWeight').value = rec.gross;
+        document.getElementById('tareWeight').value = rec.tare;
+        document.getElementById('cutPercentage').value = rec.cutPercent;
+        document.getElementById('ratePerMaund').value = rec.rate;
+
+        editingIndex = index;
+        calculateAll();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+        editingIndex = null;
+        document.getElementById('serialNo').value = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('vehicleNo').value = '';
+        document.getElementById('sellerName').value = '';
+        document.getElementById('buyerName').value = '';
+        document.getElementById('grossWeight').value = '';
+        document.getElementById('tareWeight').value = '';
+        document.getElementById('ratePerMaund').value = '';
+        document.getElementById('directMaunds').value = '';
+        document.getElementById('directKgs').value = '0';
+        calculateAll();
+    }
+
+    window.onload = function() {
+        document.getElementById('slipDate').value = new Date().toLocaleDateString();
+        calcFeeTotal();
+        renderHistory();
+        renderContractorHistory();
+    };
+</script>
+
+</body>
+</html>
+￼Enter
